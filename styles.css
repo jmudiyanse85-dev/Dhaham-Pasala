@@ -1,0 +1,300 @@
+:root {
+    --primary: #ff9800; /* Buddhist colors - Saffron/Orange */
+    --primary-dark: #f57c00;
+    --secondary: #673ab7; /* Leadership/Wisdom color */
+    --accent: #ffeb3b; /* Gold/Yellow */
+    --text-main: #333333;
+    --text-light: #ffffff;
+    --bg-main: #fcfcfc;
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --border-radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background: var(--bg-main);
+    color: var(--text-main);
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Header & Sidebar */
+header {
+    background: var(--primary);
+    color: var(--text-light);
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.menu-btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: white;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100vh;
+    background: var(--bg-glass);
+    backdrop-filter: blur(10px);
+    z-index: 1100;
+    padding: 2rem 1rem;
+    transition: 0.3s ease;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.sidebar nav ul {
+    list-style: none;
+    margin-top: 2rem;
+}
+
+.sidebar nav ul li {
+    padding: 12px 15px;
+    margin: 8px 0;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar nav ul li:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.sidebar nav ul li.active {
+    background: var(--primary);
+    color: white;
+}
+
+/* Overlay */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1050;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* Main Content */
+main {
+    padding: 2rem 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium Cards */
+.card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.card h2 {
+    margin-bottom: 1rem;
+    color: var(--primary);
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-group input, 
+.form-group select, 
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    background: #f9f9f9;
+}
+
+.form-group input:focus {
+    border-color: var(--primary);
+}
+
+button.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+/* Dashboard Summary */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+}
+
+.stat-card h3 { font-size: 1rem; opacity: 0.9; }
+.stat-card .value { font-size: 2.5rem; font-weight: 700; margin: 0.5rem 0; }
+
+/* Table */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+table th, table td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+table th {
+    background: #f4f4f4;
+    font-weight: 700;
+}
+
+/* Gallery */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.gallery-item {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 1;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Notice Board */
+.notice-card {
+    border-left: 5px solid var(--primary);
+    background: #fff9f0;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+}
+
+/* Role Badge */
+.role-badge {
+    background: #eee;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    main { padding: 1rem; }
+    .sidebar { width: 250px; }
+}
+
+.dhammapada-verse {
+    font-style: italic;
+    background: #fffde7;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    border: 1px dashed var(--accent);
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #5d4037;
+}
+
+.schedule {
+    font-weight: 700;
+    color: var(--primary);
+}

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dhaham Pasala Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="theme-color" content="#ff9800">
+</head>
+<body>
+
+    <div class="overlay" id="overlay"></div>
+
+    <header>
+        <div class="left-nav">
+            <button class="menu-btn" id="openMenu"><i class="fas fa-bars"></i></button>
+            <span style="font-size: 1.2rem; font-weight: 700; margin-left: 10px;">Dhaham Pasala</span>
+        </div>
+        <div class="user-info">
+            <span id="currentRole" class="role-badge">Guest</span>
+            <button id="logoutBtn" style="background: none; border: none; color: white; margin-left:10px; cursor: pointer; display:none;"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <span class="close-btn" id="closeMenu">&times;</span>
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <img id="appLogo" src="logo.png" alt="Logo" style="width: 80px; height: 80px; border-radius: 50%;">
+            <h3 style="margin-top: 10px;">Navigation</h3>
+        </div>
+        <nav>
+            <ul id="menuList">
+                <li data-section="home" class="active"><i class="fas fa-home"></i> Dashboard</li>
+                <li data-section="students" class="role-admin role-teacher"><i class="fas fa-user-graduate"></i> Students</li>
+                <li data-section="teachers" class="role-admin"><i class="fas fa-chalkboard-teacher"></i> Teachers</li>
+                <li data-section="leader-management" class="role-admin role-principal"><i class="fas fa-star"></i> Student Leaders</li>
+                <li data-section="classes" class="role-admin role-teacher role-principal"><i class="fas fa-school"></i> Class Management</li>
+                <li data-section="points-entry" class="role-admin role-principal role-mal-bhara"><i class="fas fa-chart-line"></i> Enter Marks/Points</li>
+                <li data-section="notices"><i class="fas fa-bullhorn"></i> Notice Board</li>
+                <li data-section="gallery"><i class="fas fa-images"></i> Gallery</li>
+                <li data-section="settings" class="role-admin"><i class="fas fa-cog"></i> Admin Settings</li>
+                <li id="installBtn" style="display: none; background: #e8f5e9; border: 1px solid #4caf50; font-weight: 700; color: #2e7d32;"><i class="fas fa-download"></i> Install App</li>
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="dhammapada-verse">
+                <p id="verseText">"නත්ථි සන්ති පරං සුඛං" - (නිවනට වඩා උතුම් සැපයක් නැත)</p>
+                <small>- සම්බුදු මුවින්</small>
+            </div>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 id="disp_school_name">Welcome to Dhaham Pasala</h2>
+                    <div class="schedule">7:30 AM - 12:00 PM</div>
+                </div>
+                <div id="schoolInfoDisplay" style="margin: 10px 0; font-size: 0.9rem; color: #666; border-left: 3px solid var(--accent); padding-left: 10px;">
+                    <p id="disp_school_address"></p>
+                    <p id="disp_school_phone"></p>
+                    <p id="disp_principal_name" style="font-weight: 700; color: var(--primary);"></p>
+                </div>
+                <p>Manage Students, Teachers, and Classroom activities with ease. Use the sidebar to navigate.</p>
+                <div id="rolePicker" style="margin-top: 2rem; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="app.setRole('admin')">Admin</button>
+                    <button class="btn btn-primary" onclick="app.setRole('principal')">Principal</button>
+                    <button class="btn btn-primary" onclick="app.setRole('teacher')">Class Teacher</button>
+                    <button class="btn btn-primary" onclick="app.setRole('mal-bhara')">Mal/Gilanpasa Guru</button>
+                    <button class="btn btn-primary" onclick="app.setRole('student')">Student/Parent</button>
+                </div>
+            </div>
+
+            <div class="card" id="onlineClassSection">
+                <h2>Online Class</h2>
+                <div id="teacherOnlineControl" style="display:none; margin-bottom: 10px;">
+                    <input type="text" id="onlineLinkInput" placeholder="Enter Zoom/Teams Link" style="width: 80%; padding: 10px;">
+                    <button class="btn btn-primary" onclick="app.setOnlineLink()">Set Link</button>
+                </div>
+                <p id="currentOnlineLink">No active online classes currently.</p>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>Total Students</h3>
+                    <div class="value" id="count-students">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, var(--secondary), #4527a0);">
+                    <h3>Total Teachers</h3>
+                    <div class="value" id="count-teachers">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4caf50, #2e7d32);">
+                    <h3>Total Classes</h3>
+                    <div class="value">11</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Students Section -->
+        <section id="students" class="section">
+            <div class="card">
+                <h2>Student Records</h2>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" id="addStudentBtn"><i class="fas fa-plus"></i> Add New Student</button>
+                </div>
+                <div class="table-container">
+                    <table id="studentsTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Contact</th>
+                                <th>WhatsApp</th>
+                                <th>Attendance</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Rows injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Teachers Section -->
+        <section id="teachers" class="section">
+            <div class="card">
+                <h2>Teacher Records</h2>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="app.showTeacherModal()"><i class="fas fa-plus"></i> Add New Teacher</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Contact</th>
+                                <th>Address</th>
+                                <th>Position/Class</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teachersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Student Leader (Shisya Nayaka) Section -->
+        <section id="leader-management" class="section">
+            <div class="card">
+                <h2>Shisya Nayaka Management</h2>
+                <div id="leaderSelectionForm" style="display:none; background: #fdf5e6; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <h3>Selection Points Entry (Total 100)</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <select id="leaderStudentSelect" style="width: 100%; padding: 10px; margin-bottom: 10px;"></select>
+                        <div class="form-group"><label>Attendance (Max 20)</label><input type="number" id="pts_att" max="20" value="0"></div>
+                        <div class="form-group"><label>Cleanliness (Max 10)</label><input type="number" id="pts_clean" max="10" value="0"></div>
+                        <div class="form-group"><label>Flower Offering (Max 10)</label><input type="number" id="pts_mal" max="10" value="0"></div>
+                        <div class="form-group"><label>Gilanpasa (Max 10)</label><input type="number" id="pts_gilan" max="10" value="0"></div>
+                        <div class="form-group"><label>Certificates (Max 10)</label><input type="number" id="pts_cert" max="10" value="0"></div>
+                        <div class="form-group"><label>Skills (Max 10)</label><input type="number" id="pts_skill" max="10" value="0"></div>
+                        <div class="form-group"><label>Physical (Max 10)</label><input type="number" id="pts_phys" max="10" value="0"></div>
+                        <div class="form-group"><label>Presentation (Max 10)</label><input type="number" id="pts_pres" max="10" value="0"></div>
+                        <div class="form-group"><label>Class Teacher Rec (Max 10)</label><input type="number" id="pts_rec" max="10" value="0"></div>
+                        <button class="btn btn-primary" style="grid-column: 1/-1;" onclick="app.saveLeaderPoints()">Submit Points</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Total Points</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leadersTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Points Entry Section -->
+        <section id="points-entry" class="section">
+            <div class="card">
+                <h2>Weekly Points Entry</h2>
+                <div class="form-group">
+                    <label>Select Grade</label>
+                    <select id="score_class" onchange="app.loadClassListForScores()">
+                        <option value="">Choose Class</option>
+                        <option value="1">Grade 1</option>
+                        <option value="2">Grade 2</option>
+                        <option value="3">Grade 3</option>
+                        <option value="4">Grade 4</option>
+                        <option value="5">Grade 5</option>
+                        <option value="6">Grade 6</option>
+                        <option value="7">Grade 7</option>
+                        <option value="8">Grade 8</option>
+                        <option value="9">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                        <option value="11">Grade 11</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="scoresTable">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Flower Offering (1-10)</th>
+                                <th>Gilanpasa (1-10)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Classes Section -->
+        <section id="classes" class="section">
+            <div class="card">
+                <h2>Class Analysis (Top 3 Students)</h2>
+                <div id="classGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                    <!-- Grade cards injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Content Sections will be expanded in script.js -->
+        
+        <!-- Notices Section -->
+        <section id="notices" class="section">
+            <div class="card">
+                <h2>Notice Board</h2>
+                <div id="adminNoticeControl" style="display:none; margin-bottom: 20px;">
+                    <textarea id="noticeInput" placeholder="Write a notice..." style="width: 100%; height: 80px; margin-bottom: 10px; padding: 10px;"></textarea>
+                    <select id="noticeTarget" style="margin-bottom: 10px; padding: 10px;">
+                        <option value="all">Everyone</option>
+                        <option value="teachers">Teachers</option>
+                        <option value="parents">Parents</option>
+                        <option value="classes">Class Groups</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="app.addNotice()">Post Notice</button>
+                </div>
+                <div id="noticesList">
+                    <!-- Notices injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="section">
+            <div class="card">
+                <h2>Photo Gallery</h2>
+                <div id="galleryUpload" style="display:none; margin-bottom: 20px;">
+                    <input type="file" id="photoInput" multiple accept="image/*">
+                    <input type="text" id="photoEvent" placeholder="Event Name">
+                    <input type="date" id="photoDate">
+                    <button class="btn btn-primary" onclick="app.uploadPhotos()">Upload</button>
+                </div>
+                <div class="gallery" id="galleryContainer">
+                    <!-- Photos injected by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section id="settings" class="section">
+            <div class="card">
+                <h2>School Settings</h2>
+                <div class="form-group">
+                    <label>Dhaham Pasala Name</label>
+                    <input type="text" id="set_school_name">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea id="set_school_address"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="text" id="set_school_phone">
+                </div>
+                <div class="form-group">
+                    <label>Principal's Name</label>
+                    <input type="text" id="set_principal_name">
+                </div>
+                <button class="btn btn-primary" onclick="app.saveSchoolSettings()">Save Settings</button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Student Add Modal (Simple overlay for demo) -->
+    <div id="studentModal" class="card" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2000; width: 90%; max-width: 500px;">
+        <h2 id="modalTitle">Register Student</h2>
+        <div class="form-group">
+            <label>Name</label>
+            <input type="text" id="s_name">
+        </div>
+        <div class="form-group">
+            <label>Date of Birth</label>
+            <input type="date" id="s_dob">
+        </div>
+        <div class="form-group">
+            <label>Address</label>
+            <textarea id="s_address"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Student WhatsApp</label>
+            <input type="text" id="s_whatsapp">
+        </div>
+        <div class="form-group">
+            <label>Parent WhatsApp</label>
+            <input type="text" id="p_whatsapp">
+        </div>
+        <div class="form-group">
+            <label>Class (1-11)</label>
+            <select id="s_class">
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+                <option value="4">Grade 4</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
+            </select>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" id="saveStudent">Save</button>
+            <button class="btn" onclick="document.getElementById('studentModal').style.display='none'; document.getElementById('overlay').classList.remove('active');">Cancel</button>
+        </div>
+    </div>
+
+    <!-- PIN Login Modal -->
+    <div id="loginModal" class="card" style="display:none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3000; width: 300px;">
+        <h3>Login - <span id="loginTitle">Role</span></h3>
+        <div class="form-group" style="margin-top: 15px;">
+            <label>Security PIN</label>
+            <input type="password" id="rolePinInput" placeholder="Enter PIN">
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-primary" id="verifyPinBtn">Login</button>
+            <button class="btn" onclick="document.getElementById('loginModal').style.display='none'; document.getElementById('overlay').classList.remove('active');">Cancel</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
